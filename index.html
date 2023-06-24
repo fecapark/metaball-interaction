@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + TSs</title>
+  </head>
+  <body>
+    <div id="app">
+      <div class="ball"></div>
+      <div class="ball other"></div>
+    </div>
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="filter">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="14" result="blur" />
+          <feComponentTransfer>
+            <feFuncA type="discrete" tableValues="0 1" />
+          </feComponentTransfer>
+        </filter>
+      </defs>
+    </svg>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
