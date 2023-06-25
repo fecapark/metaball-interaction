@@ -30,4 +30,12 @@ export class Vector2 {
 
     return new Vector2(this.x / num, this.y / num);
   }
+
+  norm() {
+    return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+  }
+
+  normalize() {
+    return this.div(this.norm());
+  }
 }

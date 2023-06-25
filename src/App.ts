@@ -1,46 +1,41 @@
 import "./style.css";
 import { Application, Graphics, ICanvas } from "pixi.js";
 import { useAlphaThresholdFilter, useBlurFilter } from "./utils/filters";
+import BlobManager from "./managers/blobManager";
 import { Vector2 } from "./utils/vector";
 
 export default class App {
-  private stageWidth: number = 0;
-  private stageHeight: number = 0;
-
-  private app: Application<ICanvas>;
+  private gl: Application<ICanvas>;
   private gp: Graphics;
+  private blobManager: BlobManager;
 
-  private pos: Vector2 = new Vector2();
+  private gooeyColor: string = "#4285F4";
+
+  public stageWidth: number = 0;
+  public stageHeight: number = 0;
 
   constructor() {
-    this.app = this.setGL();
+    // Set grapic renderer
+    this.gl = this.setGL();
     this.gp = this.setGraphic();
 
     this.setFilters();
     this.setView();
 
+    // Set resizing view
     window.addEventListener("resize", this.resize.bind(this));
     this.resize();
 
-    this.app.ticker.add(() => {
-      this.gp.clear();
+    // Instances
+    this.blobManager = new BlobManager(this.gp);
 
-      this.gp.beginFill("#ffcc00");
-      this.gp.drawCircle(this.stageWidth / 2, this.stageHeight / 2, 120);
-      this.gp.endFill();
-
-      this.gp.beginFill("#ffcc00");
-      this.gp.drawCircle(this.pos.x, this.pos.y, 60);
-      this.gp.endFill();
-    });
-
-    document.addEventListener("pointermove", (e) => {
-      this.pos = new Vector2(e.offsetX, e.offsetY);
-    });
+    // Set app
+    this.init();
+    requestAnimationFrame(this.animate.bind(this));
   }
 
   setGL() {
-    this.app = new Application({
+    this.gl = new Application({
       resizeTo: window,
       backgroundColor: "#f2f2f2",
       resolution: window.devicePixelRatio > 1 ? 2 : 1,
@@ -49,13 +44,13 @@ export default class App {
       powerPreference: "high-performance",
     });
 
-    return this.app;
+    return this.gl;
   }
 
   setFilters() {
-    const { stage, screen } = this.app;
+    const { stage, screen } = this.gl;
 
-    const alphaThresholdFilter = useAlphaThresholdFilter(0.5);
+    const alphaThresholdFilter = useAlphaThresholdFilter(0.5, this.gooeyColor);
     const blurFilter = useBlurFilter(14);
 
     stage.filters = [blurFilter, alphaThresholdFilter];
@@ -63,12 +58,12 @@ export default class App {
   }
 
   setView() {
-    const { view } = this.app;
+    const { view } = this.gl;
     document.getElementById("app")!.appendChild(view as HTMLCanvasElement);
   }
 
   setGraphic() {
-    const { stage } = this.app;
+    const { stage } = this.gl;
     const gp = new Graphics();
 
     stage.addChild(gp);
@@ -79,5 +74,32 @@ export default class App {
   resize() {
     this.stageWidth = document.body.clientWidth;
     this.stageHeight = document.body.clientHeight;
+  }
+
+  init() {
+    this.blobManager.setGooeyGroup({
+      pos: new Vector2(this.stageWidth / 2, this.stageHeight / 2),
+      color: this.gooeyColor,
+      amount: 1000,
+      amplitude: 300,
+      radiusRange: [4, 10],
+    });
+  }
+
+  animate() {
+    const update = () => {
+      this.blobManager.update();
+    };
+
+    const draw = () => {
+      this.gp.clear();
+
+      this.blobManager.draw();
+    };
+
+    requestAnimationFrame(this.animate.bind(this));
+
+    update();
+    draw();
   }
 }
