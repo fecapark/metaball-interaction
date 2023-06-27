@@ -1,89 +1,67 @@
 import "./style.css";
 import { Application, Graphics, ICanvas } from "pixi.js";
-import { useAlphaThresholdFilter, useBlurFilter } from "./utils/filters";
 import BlobManager from "./managers/blobManager";
-import { Vector2 } from "./utils/vector";
+import PointerManager from "./managers/pointerManager";
+import { useFilters, useGrapic, useRenderer, useView } from "./core/grapic";
+import { blobColor } from "./core/const";
+
+interface IAppModules {
+  blobManager: BlobManager;
+  pointerManager: PointerManager;
+}
 
 export default class App {
-  private gl: Application<ICanvas>;
-  private gp: Graphics;
-  private blobManager: BlobManager;
+  private renderer: Application<ICanvas>;
+  public grapic: Graphics;
+  private initFunctions: Array<() => void> = [];
 
-  private gooeyColor: string = "#4285F4";
-
+  public blobManager: BlobManager;
+  public pointerManager: PointerManager;
   public stageWidth: number = 0;
   public stageHeight: number = 0;
 
   constructor() {
     // Set grapic renderer
-    this.gl = this.setGL();
-    this.gp = this.setGraphic();
+    this.renderer = useRenderer();
+    this.grapic = useGrapic(this.renderer);
 
-    this.setFilters();
-    this.setView();
+    useFilters(this.renderer, {
+      threshold: {
+        value: 0.5,
+        maskColor: blobColor,
+      },
+      blur: 14,
+    });
+    useView(this.renderer);
+
+    // Instances
+    this.blobManager = new BlobManager(this);
+    this.pointerManager = new PointerManager(this);
 
     // Set resizing view
     window.addEventListener("resize", this.resize.bind(this));
     this.resize();
-
-    // Instances
-    this.blobManager = new BlobManager(this.gp);
 
     // Set app
     this.init();
     requestAnimationFrame(this.animate.bind(this));
   }
 
-  setGL() {
-    this.gl = new Application({
-      resizeTo: window,
-      backgroundColor: "#f2f2f2",
-      resolution: window.devicePixelRatio > 1 ? 2 : 1,
-      autoDensity: true,
-      antialias: true,
-      powerPreference: "high-performance",
-    });
-
-    return this.gl;
-  }
-
-  setFilters() {
-    const { stage, screen } = this.gl;
-
-    const alphaThresholdFilter = useAlphaThresholdFilter(0.5, this.gooeyColor);
-    const blurFilter = useBlurFilter(14);
-
-    stage.filters = [blurFilter, alphaThresholdFilter];
-    stage.filterArea = screen;
-  }
-
-  setView() {
-    const { view } = this.gl;
-    document.getElementById("app")!.appendChild(view as HTMLCanvasElement);
-  }
-
-  setGraphic() {
-    const { stage } = this.gl;
-    const gp = new Graphics();
-
-    stage.addChild(gp);
-
-    return gp;
-  }
-
   resize() {
     this.stageWidth = document.body.clientWidth;
     this.stageHeight = document.body.clientHeight;
+
+    this.blobManager.resize();
   }
 
   init() {
-    this.blobManager.setGooeyGroup({
-      pos: new Vector2(this.stageWidth / 2, this.stageHeight / 2),
-      color: this.gooeyColor,
-      amount: 1000,
-      amplitude: 300,
-      radiusRange: [4, 10],
+    this.initFunctions.forEach((fn) => {
+      fn();
     });
+  }
+
+  addInitFunction(fn: () => void) {
+    this.initFunctions.push(fn);
   }
 
   animate() {
@@ -92,8 +70,7 @@ export default class App {
     };
 
     const draw = () => {
-      this.gp.clear();
-
+      this.grapic.clear();
       this.blobManager.draw();
     };
 
@@ -101,5 +78,12 @@ export default class App {
 
     update();
     draw();
+  }
+
+  getModules(): IAppModules {
+    return {
+      blobManager: this.blobManager,
+      pointerManager: this.pointerManager,
+    };
   }
 }

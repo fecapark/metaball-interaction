@@ -1,3 +1,5 @@
+import { degToRad } from "./math";
+
 export class Vector2 {
   public x: number;
   public y: number;
@@ -5,6 +7,10 @@ export class Vector2 {
   constructor(x: number = 0, y: number = 0) {
     this.x = x;
     this.y = y;
+  }
+
+  static getDir(deg: number) {
+    return new Vector2(Math.cos(degToRad(deg)), Math.sin(degToRad(deg)));
   }
 
   copy() {
@@ -37,5 +43,11 @@ export class Vector2 {
 
   normalize() {
     return this.div(this.norm());
+  }
+
+  getDistWith(other: Vector2) {
+    return Math.sqrt(
+      Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2)
+    );
   }
 }

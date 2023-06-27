@@ -9,7 +9,7 @@ export function randFloat([from, to]: [number, number]) {
   const buffer = new Uint32Array(1);
   const randBuffer = window.crypto.getRandomValues(buffer);
   const randNum = randBuffer[0] / (0xffffffff + 1);
-  return randNum * (to - from + 1) + from;
+  return randNum * (to - from) + from;
 }
 
 export function pickOne<T>(...items: T[]): T {

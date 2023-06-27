@@ -4,6 +4,11 @@
   outline: 0;
 
   box-sizing: border-box;
+
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  -moz-user-select: none;
 }
 
 html,
