@@ -14,22 +14,32 @@ export default class Range {
     fromRange: [number, number],
     toRange: [number, number]
   ) {
-    if (fromRange[0] > fromRange[1]) {
-      [fromRange[0], fromRange[1]] = [fromRange[1], fromRange[0]];
+    // Slice value to range min ~ max
+    const fmax = Math.max(...fromRange);
+    const fmin = Math.min(...fromRange);
+    value = Math.max(Math.min(value, fmax), fmin);
+
+    // Get difference of range
+    let fromDiff = fromRange[1] - fromRange[0];
+    let toDiff = toRange[1] - toRange[0];
+
+    // Get difference sign
+    const isSigned = fromDiff * toDiff > 0;
+
+    // Set unsigned to signed
+    fromDiff = Math.abs(fromDiff);
+    toDiff = Math.abs(toDiff);
+
+    // Calculate
+    const ratio = toDiff / fromDiff;
+    const offset = value - fromRange[0];
+    const start = toRange[0];
+
+    if (isSigned) {
+      return start + ratio * offset;
     }
 
-    if (toRange[0] > toRange[1]) {
-      [toRange[0], toRange[1]] = [toRange[1], toRange[0]];
-    }
-
-    value = Math.max(Math.min(value, fromRange[1]), fromRange[0]);
-
-    const fromDiff = fromRange[1] - fromRange[0];
-    const toDiff = toRange[1] - toRange[0];
-    const transformRatio = toDiff / fromDiff;
-    const v = (value - fromRange[0]) * transformRatio + toRange[0];
-
-    return v;
+    return start - ratio * offset;
   }
 
   private mergeResult(prev: boolean) {
@@ -67,5 +77,13 @@ export default class Range {
 
   isIn(): boolean {
     return this.result;
+  }
+
+  isPossitive() {
+    return new Range(this.value, this.mergeResult(this.value > 0)).isIn();
+  }
+
+  isNegative() {
+    return new Range(this.value, this.mergeResult(this.value < 0)).isIn();
   }
 }

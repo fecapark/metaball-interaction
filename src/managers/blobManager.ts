@@ -1,100 +1,136 @@
-import Blob from "../objects/blob";
-import { pickOne, randInt } from "../utils/random";
-import App from "../App";
-import { blobColor, gooeyOption } from "../core/const";
+import { randInt } from "../utils/random";
+import { blobColor } from "../core/const";
+import { GooeyOption } from "../core/options";
+import PointerManager from "./pointerManager";
+import StageManager from "./stageManager";
+import { IBaseBlob } from "../../types/objects/blob";
+import FeederBlob from "../objects/feederBlob/feederBlob";
+import GooeyBlob from "../objects/gooeyBlob/gooeyBlob";
+import { Vector2 } from "../utils/vector";
 
 export default class BlobManager {
-  private app: App;
+  private static instance: BlobManager;
 
-  public groups: Record<string, Blob[]>;
+  private globalBlobs: Array<IBaseBlob> = [];
+  private gooeyBlobs: Array<GooeyBlob> = [];
+  private feederBlobs: Array<FeederBlob> = [];
+
   public canExploed: boolean = true;
-  public explodedCount: number;
+  public explodedCount: number = 0;
+  public maxBlobAmplitude: number = 0;
+  public maxBlobAmplitudeRange: [number, number] = [0, 0];
 
-  constructor(app: App) {
-    this.app = app;
-    this.groups = {
-      global: [],
-    };
-    this.explodedCount = 0;
+  private constructor() {
+    StageManager.getInstance().addResize(this.resize.bind(this));
+  }
 
-    this.app.addInitFunction(() => {
-      this.setGooeyGroup();
+  static getInstance() {
+    BlobManager.instance ??= new BlobManager();
+    return BlobManager.instance;
+  }
+
+  get allBlobs() {
+    return [...this.globalBlobs, ...this.gooeyBlobs, ...this.feederBlobs];
+  }
+
+  getBlobsByName(name: string) {
+    if (name === "global") return this.globalBlobs;
+    if (name === "gooey") return this.gooeyBlobs;
+    if (name === "feeder") return this.feederBlobs;
+    return null;
+  }
+
+  init() {
+    const pointerManager = PointerManager.getInstance();
+
+    // Gooey group
+    this.setGooeyGroup();
+    pointerManager.addPointerDownHandler(() => {
+      if (
+        this.canExploed &&
+        this.isHoverOnGroup("gooey") &&
+        !this.checkGooeyIsTooSmallToExplode()
+      ) {
+        this.triggerExplode();
+      }
     });
 
-    this.app.addInitFunction(() => {
-      const { pointerManager } = this.app.getModules();
-      pointerManager.addPointerDownHandler(() => {
-        if (this.canExploed && this.isHoverOnGroup("gooey")) {
-          this.triggerExplode();
-        }
-      });
+    // Feeder group
+    pointerManager.addUntilPointerDownToUpHandler((pointerPos) => {
+      if (!this.canExploed || this.isHoverOnGroup("gooey")) return;
+      this.setFeederGroupTo(pointerPos);
     });
   }
 
   update() {
-    Object.entries(this.groups).forEach(([_, blobs]) => {
-      blobs.forEach((aBlob) => {
-        aBlob.update();
-      });
+    this.allBlobs.forEach((blob) => {
+      blob.update();
     });
+
+    this.setMaxAmplitudeInBlobs();
+    this.feedToGooey();
+
+    if (this.checkSatisfiedAutoExplode()) {
+      this.triggerExplode();
+    }
   }
 
   draw() {
-    Object.entries(this.groups).forEach(([_, blobs]) => {
-      blobs.forEach((aBlob) => {
-        aBlob.draw();
-      });
+    this.allBlobs.forEach((aBlob) => {
+      aBlob.draw();
     });
   }
 
   resize() {
-    Object.entries(this.groups).forEach(([_, blobs]) => {
-      blobs.forEach((aBlob) => {
-        aBlob.resize();
-      });
+    this.allBlobs.forEach((aBlob) => {
+      aBlob.resize();
     });
   }
 
-  setGroup(name: string, blobs: Blob[]) {
-    if (name in this.groups) {
-      this.groups[name] = [...this.groups[name], ...blobs];
-    } else {
-      this.groups[name] = blobs;
-    }
-  }
-
   setGooeyGroup() {
-    const GOOEY_BLOB_COUNT = gooeyOption.amount;
+    const radiusRange = GooeyOption.radiusRange();
+    const GOOEY_BLOB_COUNT = GooeyOption.amount;
 
     for (let i = 0; i < GOOEY_BLOB_COUNT; i++) {
-      const RADIUS = randInt(
-        gooeyOption.radiusRange(this.app.stageWidth, this.app.stageHeight)
-      );
-
-      const blob = new Blob(this.app, {
+      const RADIUS = randInt(radiusRange);
+      const blob = new GooeyBlob({
         x: 0,
         y: 0,
         radius: RADIUS,
         color: blobColor,
-        onResize: (blob) => {
-          blob.radius = randInt(
-            gooeyOption.radiusRange(this.app.stageWidth, this.app.stageHeight)
-          );
-        },
       });
-
-      this.setGroup("gooey", [blob]);
+      this.gooeyBlobs.push(blob);
     }
   }
 
-  isHoverOnGroup(group: string) {
-    const {
-      pointerManager: { pointerPos },
-    } = this.app.getModules();
+  setFeederGroupTo(pos: Vector2) {
+    const FEEDER_BLOB_COUNT = 6;
+    const xOffset = 60;
+    const yOffset = 60;
+    const radiusRange: [number, number] = [10, 50];
 
-    if (!(group in this.groups)) return false;
+    const make = () => {
+      const blob = new FeederBlob({
+        x: pos.x + randInt([-xOffset, xOffset]),
+        y: pos.y + randInt([-yOffset, yOffset]),
+        radius: randInt(radiusRange),
+        color: "white",
+      });
+      return blob;
+    };
 
-    for (const blob of this.groups[group]) {
+    for (let i = 0; i < FEEDER_BLOB_COUNT; i++) {
+      this.feederBlobs.push(make());
+    }
+  }
+
+  isHoverOnGroup(name: string) {
+    const { pointerPos } = PointerManager.getInstance();
+    const group = this.getBlobsByName(name);
+
+    if (group === null) return false;
+
+    for (const blob of group) {
       if (blob.pos.getDistWith(pointerPos) <= blob.radius) {
         return true;
       }
@@ -108,7 +144,7 @@ export default class BlobManager {
 
     this.explodedCount += 1;
 
-    if (this.groups["gooey"].length <= this.explodedCount) {
+    if (this.gooeyBlobs.length <= this.explodedCount) {
       this.canExploed = true;
       this.explodedCount = 0;
     }
@@ -118,8 +154,52 @@ export default class BlobManager {
     if (!this.canExploed) return;
     this.canExploed = false;
 
-    for (const blob of this.groups["gooey"]) {
-      blob.animationBridge.next();
-    }
+    this.gooeyBlobs.forEach((blob) => {
+      blob.bridge.next();
+      blob.shrink();
+    });
+
+    this.feederBlobs.forEach((blob) => {
+      blob.protrude();
+    });
+  }
+
+  feedToGooey() {
+    const newFeeders = this.feederBlobs.filter((blob) => !blob.isDead);
+    const deadCount = this.feederBlobs.length - newFeeders.length;
+
+    this.gooeyBlobs.forEach((blob) => {
+      blob.growth(deadCount);
+    });
+
+    this.feederBlobs = newFeeders;
+  }
+
+  checkSatisfiedAutoExplode() {
+    if (!this.canExploed) return false;
+
+    return this.maxBlobAmplitude > this.maxBlobAmplitudeRange[1];
+  }
+
+  checkGooeyIsTooSmallToExplode() {
+    return this.maxBlobAmplitude < this.maxBlobAmplitudeRange[0];
+  }
+
+  setMaxAmplitudeInBlobs() {
+    const boundary = GooeyOption.amplitudeBoundaryRatioRange();
+
+    let max = 0;
+    let range: [number, number] = [0, 0];
+
+    this.gooeyBlobs.forEach((blob) => {
+      if (max < blob.bridge.amplitude) {
+        const { amplitude } = blob.snapshot;
+        max = blob.bridge.amplitude;
+        range = [amplitude * boundary[0], amplitude * boundary[1]];
+      }
+    });
+
+    this.maxBlobAmplitude = max;
+    this.maxBlobAmplitudeRange = range;
   }
 }

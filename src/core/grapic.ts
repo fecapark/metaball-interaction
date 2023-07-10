@@ -42,5 +42,5 @@ export function useFilters(renderer: Application, option: IFilterOptions) {
 
 export function useView(renderer: Application) {
   const { view } = renderer;
-  document.getElementById("app")!.appendChild(view as HTMLCanvasElement);
+  document.getElementById("gl")!.appendChild(view as HTMLCanvasElement);
 }

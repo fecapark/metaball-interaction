@@ -1,29 +1,21 @@
 import "./style.css";
-import { Application, Graphics, ICanvas } from "pixi.js";
+import { Application, ICanvas } from "pixi.js";
 import BlobManager from "./managers/blobManager";
 import PointerManager from "./managers/pointerManager";
-import { useFilters, useGrapic, useRenderer, useView } from "./core/grapic";
+import { useFilters, useView } from "./core/grapic";
 import { blobColor } from "./core/const";
-
-interface IAppModules {
-  blobManager: BlobManager;
-  pointerManager: PointerManager;
-}
+import StageManager from "./managers/stageManager";
+import WebGLManager from "./managers/webglManager";
 
 export default class App {
   private renderer: Application<ICanvas>;
-  public grapic: Graphics;
-  private initFunctions: Array<() => void> = [];
 
-  public blobManager: BlobManager;
-  public pointerManager: PointerManager;
-  public stageWidth: number = 0;
-  public stageHeight: number = 0;
+  private blobManager: BlobManager;
+  private pointerManager: PointerManager;
 
   constructor() {
     // Set grapic renderer
-    this.renderer = useRenderer();
-    this.grapic = useGrapic(this.renderer);
+    this.renderer = WebGLManager.getInstance().renderer;
 
     useFilters(this.renderer, {
       threshold: {
@@ -35,55 +27,32 @@ export default class App {
     useView(this.renderer);
 
     // Instances
-    this.blobManager = new BlobManager(this);
-    this.pointerManager = new PointerManager(this);
-
-    // Set resizing view
-    window.addEventListener("resize", this.resize.bind(this));
-    this.resize();
+    this.blobManager = BlobManager.getInstance();
+    this.pointerManager = PointerManager.getInstance();
+    StageManager.getInstance();
 
     // Set app
     this.init();
     requestAnimationFrame(this.animate.bind(this));
   }
 
-  resize() {
-    this.stageWidth = document.body.clientWidth;
-    this.stageHeight = document.body.clientHeight;
-
-    this.blobManager.resize();
-  }
-
   init() {
-    this.initFunctions.forEach((fn) => {
-      fn();
-    });
-  }
-
-  addInitFunction(fn: () => void) {
-    this.initFunctions.push(fn);
+    this.blobManager.init();
   }
 
   animate() {
     const update = () => {
+      this.pointerManager.update();
       this.blobManager.update();
     };
 
     const draw = () => {
-      this.grapic.clear();
+      WebGLManager.getInstance().graphics.clear();
       this.blobManager.draw();
     };
 
     requestAnimationFrame(this.animate.bind(this));
-
     update();
     draw();
-  }
-
-  getModules(): IAppModules {
-    return {
-      blobManager: this.blobManager,
-      pointerManager: this.pointerManager,
-    };
   }
 }
