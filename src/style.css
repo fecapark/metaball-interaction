@@ -21,6 +21,7 @@ body,
 }
 
 body {
+  font-family: Roboto, sans-serif;
   color: #212121;
 }
 
@@ -28,4 +29,169 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: url(../assets/brush-focus.svg) 16 16, auto;
+}
+
+#option-container {
+  font-size: 0.8rem;
+
+  position: fixed;
+  left: 1.25rem;
+  padding: 0 1rem;
+
+  width: 320px;
+
+  background-color: #00000066;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.21);
+
+  color: white;
+  font-weight: 300;
+
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+#option-container::-webkit-scrollbar {
+  max-width: 4px;
+}
+
+#option-container::-webkit-scrollbar-thumb {
+  border-radius: 100px;
+  background-color: #626262;
+}
+
+#option-container::-webkit-scrollbar-track {
+  background: #00000000;
+}
+
+#option-container input[type="range"] {
+  cursor: ew-resize;
+}
+
+#option-container > .option-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+#option-container.hidden > .option-header {
+  margin-bottom: 0;
+}
+
+#option-container > .option-header > h1 {
+  font-weight: 300;
+  font-size: 1.8em;
+}
+
+#option-toggle-btn {
+  padding: 0.5rem 0;
+  margin: 0 -1rem;
+
+  width: calc(100% + 2rem);
+  text-align: center;
+
+  cursor: pointer;
+  background-color: #000000aa;
+}
+
+#option-toggle-btn:hover {
+  background-color: #000000ff;
+}
+
+#option-container > section {
+  margin-bottom: 1.4rem;
+}
+
+#option-container.hidden > section {
+  display: none;
+}
+
+#option-container > section > .title {
+  display: block;
+  font-size: 1.4em;
+  margin-bottom: 1rem;
+}
+
+#option-container > section > .option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.2rem;
+}
+
+#option-container > section > .option > .option__name {
+  font-size: 0.9em;
+  margin-right: 1rem;
+}
+
+#option-container > section > .option > div {
+  display: flex;
+  align-items: center;
+}
+
+#option-container input[type="number"] {
+  width: 45px;
+  margin-left: 0.5rem;
+
+  background-color: #454545aa;
+  border: 0;
+}
+
+#option-container input[type="number"]:hover,
+#option-container input[type="number"]:focus {
+  background-color: #454545ff;
+}
+
+#option-container input[type="number"]::-webkit-outer-spin-button,
+#option-container input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* 파이어폭스에서의 초기화 방법 */
+#option-container input[type="number"] {
+  -moz-appearance: textfield;
+  padding: 0.3em;
+  font-size: 0.7rem;
+  height: 20px;
+  color: #058aff;
+}
+
+#option-container input[type="number"]:focus {
+  color: white;
+}
+
+#option-container input[type="number"]:focus {
+  cursor: ns-resize;
+}
+
+#option-container input[type="range"] {
+  -webkit-appearance: none;
+  width: 100px;
+  background: #454545aa;
+}
+
+#option-container input[type="range"]:hover,
+#option-container input[type="range"]:focus {
+  background-color: #454545ff;
+}
+
+#option-container input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+
+  width: 6px;
+  height: 20px;
+  background: #058aff;
+}
+
+#footer {
+  position: fixed;
+  bottom: 1.25em;
+  color: #a0a0a0;
+  font-size: 0.75rem;
 }

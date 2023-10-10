@@ -5,7 +5,6 @@ const PORT = 4000;
 export default defineConfig(({ command }) => {
   if (command === "serve") {
     return {
-      base: `/proxy/${PORT}/`,
       server: {
         port: PORT,
         strictPort: true,

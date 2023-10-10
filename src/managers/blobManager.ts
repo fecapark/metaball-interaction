@@ -91,6 +91,7 @@ export default class BlobManager {
     const radiusRange = GooeyOption.radiusRange();
     const GOOEY_BLOB_COUNT = GooeyOption.amount;
 
+    this.gooeyBlobs = [];
     for (let i = 0; i < GOOEY_BLOB_COUNT; i++) {
       const RADIUS = randInt(radiusRange);
       const blob = new GooeyBlob({
@@ -101,6 +102,11 @@ export default class BlobManager {
       });
       this.gooeyBlobs.push(blob);
     }
+  }
+
+  initExplodeStates() {
+    this.canExploed = true;
+    this.explodedCount = 0;
   }
 
   setFeederGroupTo(pos: Vector2) {

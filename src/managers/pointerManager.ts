@@ -17,26 +17,28 @@ export default class PointerManager {
     this.pointerPos = new Vector2();
     this.isPointerDown = false;
 
-    document.addEventListener("pointerdown", (e) => {
+    const app = document.getElementById("app")!;
+
+    app.addEventListener("pointerdown", (e) => {
       this.isPointerDown = true;
       this.savePointerPos(e);
       this.pointerDownHandlers.forEach((fn) => {
         fn(this.pointerPos);
       });
     });
-    document.addEventListener("pointermove", (e) => {
+    app.addEventListener("pointermove", (e) => {
       this.savePointerPos(e);
       this.pointerMoveHandlers.forEach((fn) => {
         fn(this.pointerPos);
       });
     });
-    document.addEventListener("pointerup", () => {
+    app.addEventListener("pointerup", () => {
       this.pointerEnd();
     });
-    document.addEventListener("pointerleave", () => {
+    app.addEventListener("pointerleave", () => {
       this.pointerEnd();
     });
-    document.addEventListener("pointercancel", () => {
+    app.addEventListener("pointercancel", () => {
       this.pointerEnd();
     });
   }
@@ -53,7 +55,7 @@ export default class PointerManager {
   }
 
   savePointerPos(e: PointerEvent) {
-    this.pointerPos = new Vector2(e.offsetX, e.offsetY);
+    this.pointerPos = new Vector2(e.clientX, e.clientY);
   }
 
   addPointerDownHandler(fn: PointerManagerEventHandler) {

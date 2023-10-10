@@ -6,6 +6,7 @@ import { useFilters, useView } from "./core/grapic";
 import { blobColor } from "./core/const";
 import StageManager from "./managers/stageManager";
 import WebGLManager from "./managers/webglManager";
+import OptionManager, { initialValues } from "./managers/optionManager";
 
 export default class App {
   private renderer: Application<ICanvas>;
@@ -19,14 +20,15 @@ export default class App {
 
     useFilters(this.renderer, {
       threshold: {
-        value: 0.5,
+        value: initialValues.threshold,
         maskColor: blobColor,
       },
-      blur: 14,
+      blur: initialValues.blur,
     });
     useView(this.renderer);
 
     // Instances
+    OptionManager.getInstance();
     this.blobManager = BlobManager.getInstance();
     this.pointerManager = PointerManager.getInstance();
     StageManager.getInstance();
