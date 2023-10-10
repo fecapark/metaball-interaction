@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d dist"
   },
   "devDependencies": {
     "typescript": "^5.0.2",
@@ -14,6 +16,8 @@
   },
   "dependencies": {
     "bezier-easing": "^2.1.0",
+    "gh-pages": "^6.0.0",
     "pixi.js": "^7.2.4"
-  }
+  },
+  "homepage": "https://fecapark.github.io/metaball-interaction/"
 }
