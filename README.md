@@ -10,8 +10,8 @@ by fecapark
 
 ## Info
 
-Use WebGL([PIXI.js](https://github.com/pixijs/pixijs)) for high performance,
-
 In computer graphics, [metaballs](https://en.wikipedia.org/wiki/Metaballs) can be implemented using a opacity-[thresholding](<https://en.wikipedia.org/wiki/Thresholding_(image_processing)>) method with [Gaussian Blur](https://en.wikipedia.org/wiki/Gaussian_blur).
 
-But PIXI.js doesn't have threshold filter, so I made it.
+Due to WebGL([PIXI.js](https://github.com/pixijs/pixijs)) for high performance, in general, 60fps was possible.
+
+I need blur-filter and threshold filter, but PIXI.js doesn't have the threshold filter, so I made [it](https://github.com/fecapark/metaball-interaction/blob/master/src/utils/filters.ts) using GLSL.
