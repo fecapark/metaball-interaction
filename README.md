@@ -10,7 +10,7 @@ by fecapark
 
 ## Info
 
-Use WebGL(PIXI.js) for high performance,
+Use WebGL([PIXI.js](https://github.com/pixijs/pixijs)) for high performance,
 
 In computer graphics, [metaballs](https://en.wikipedia.org/wiki/Metaballs) can be implemented using a opacity-[thresholding](<https://en.wikipedia.org/wiki/Thresholding_(image_processing)>) method with [Gaussian Blur](https://en.wikipedia.org/wiki/Gaussian_blur).
 
