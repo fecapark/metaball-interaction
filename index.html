@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/metaball-interaction/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Metaball Interaction</title>
+    <script type="module" crossorigin src="/metaball-interaction/assets/index-6f612db7.js"></script>
+    <link rel="stylesheet" href="/metaball-interaction/assets/index-7ffcc44f.css">
+  </head>
+  <body>
+    <div id="option-container" class="hidden">
+      <div class="option-header">
+        <div id="option-toggle-btn">Show Controls</div>
+      </div>
+
+      <section>
+        <span class="title">Metaball Graphics</span>
+        <div class="option" data-key="blur" data-type="range">
+          <span class="option__name">Blur</span>
+          <div>
+            <input
+              autocomplete="off"
+              type="range"
+              min="0"
+              max="16"
+              value="10"
+              step="0.5"
+            />
+            <input
+              autocomplete="off"
+              class="option_value"
+              type="number"
+              min="0"
+              max="16"
+              value="10"
+              step="0.5"
+            />
+          </div>
+        </div>
+        <div class="option" data-key="threshold" data-type="range">
+          <span class="option__name">Threshold</span>
+          <div>
+            <input
+              autocomplete="off"
+              type="range"
+              min="0"
+              max="1"
+              value="0.5"
+              step="0.05"
+            />
+            <input
+              autocomplete="off"
+              class="option_value"
+              type="number"
+              min="0"
+              max="1"
+              value="0.5"
+              step="0.05"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <span class="title">Blobs</span>
+        <div class="option" data-key="amount" data-type="range">
+          <span class="option__name">Amount</span>
+          <div>
+            <input
+              autocomplete="off"
+              type="range"
+              min="1"
+              max="1000"
+              value="300"
+              step="1"
+            />
+            <input
+              autocomplete="off"
+              class="option_value"
+              type="number"
+              min="1"
+              max="1000"
+              value="300"
+              step="1"
+            />
+          </div>
+        </div>
+        <div class="option" data-key="radiusRange" data-type="two-constant">
+          <span class="option__name"
+            >Radius Range <small>(can resize)</small></span
+          >
+          <div>
+            <input
+              autocomplete="off"
+              class="min"
+              type="number"
+              value="10"
+              step="1"
+              min="2"
+            />
+            <input
+              autocomplete="off"
+              class="max"
+              type="number"
+              value="25"
+              step="1"
+              min="2"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <span class="title">Gooey</span>
+        <div class="option" data-key="animateSpeed" data-type="two-constant">
+          <span class="option__name">Animate Speed</span>
+          <div>
+            <input
+              autocomplete="off"
+              class="min"
+              type="number"
+              value="0.01"
+              step="0.001"
+              min="0.001"
+            />
+            <input
+              autocomplete="off"
+              class="max"
+              type="number"
+              value="0.1"
+              step="0.001"
+              min="0.001"
+            />
+          </div>
+        </div>
+        <div class="option" data-key="amplitude" data-type="two-constant">
+          <span class="option__name">Amplitude</span>
+          <div>
+            <input
+              autocomplete="off"
+              class="min"
+              type="number"
+              value="20"
+              step="1"
+              min="1"
+            />
+            <input
+              autocomplete="off"
+              class="max"
+              type="number"
+              value="70"
+              step="1"
+              min="1"
+            />
+          </div>
+        </div>
+        <div class="option" data-key="amplitudeMinRatio" data-type="range">
+          <span class="option__name">Amplitude Min Ratio</span>
+          <div>
+            <input
+              autocomplete="off"
+              type="range"
+              min="0.3"
+              max="1"
+              value="0.45"
+              step="0.05"
+            />
+            <input
+              autocomplete="off"
+              class="option_value"
+              type="number"
+              min="0.3"
+              max="1"
+              value="0.45"
+              step="0.05"
+            />
+          </div>
+        </div>
+        <div
+          class="option"
+          data-key="amplitudeMaxRatio"
+          data-type="two-constant"
+        >
+          <span class="option__name">Amplitude Max Ratio</span>
+          <div>
+            <input
+              autocomplete="off"
+              class="min"
+              type="number"
+              value="1.8"
+              step="0.1"
+              min="1"
+            />
+            <input
+              autocomplete="off"
+              class="max"
+              type="number"
+              value="3"
+              step="1"
+              min="1"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <span class="title">Explosion</span>
+        <div class="option" data-key="bounce" data-type="range">
+          <span class="option__name">Bounce</span>
+          <div>
+            <input
+              autocomplete="off"
+              type="range"
+              min="0.01"
+              max="0.99"
+              value="0.83"
+              step="0.01"
+            />
+            <input
+              autocomplete="off"
+              class="option_value"
+              type="number"
+              min="0.01"
+              max="0.99"
+              value="0.83"
+              step="0.01"
+            />
+          </div>
+        </div>
+        <div class="option" data-key="dragRange" data-type="two-constant">
+          <span class="option__name">Drag Range</span>
+          <div>
+            <input
+              autocomplete="off"
+              class="min"
+              type="number"
+              value="20"
+              step="0.5"
+              min="2"
+              max="300"
+            />
+            <input
+              autocomplete="off"
+              class="max"
+              type="number"
+              value="100"
+              step="0.5"
+              min="2"
+              max="300"
+            />
+          </div>
+        </div>
+        <div
+          class="option"
+          data-key="explosionSizeRatio"
+          data-type="two-constant"
+        >
+          <span class="option__name">Explosion Size Ratio</span>
+          <div>
+            <input
+              autocomplete="off"
+              class="min"
+              type="number"
+              value="0.9"
+              step="0.05"
+              min="0.5"
+              max="1.5"
+            />
+            <input
+              autocomplete="off"
+              class="max"
+              type="number"
+              value="1.2"
+              step="0.05"
+              min="0.5"
+              max="1.5"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <span class="title">Merge</span>
+        <div class="option" data-key="mergeDuration" data-type="range">
+          <span class="option__name">Duration</span>
+          <div>
+            <input
+              autocomplete="off"
+              type="range"
+              min="0.1"
+              max="5"
+              value="0.85"
+              step="0.01"
+            />
+            <input
+              autocomplete="off"
+              class="option_value"
+              type="number"
+              min="0.1"
+              max="5"
+              value="0.85"
+              step="0.01"
+            />
+          </div>
+        </div>
+      </section>
+    </div>
+    <div id="app">
+      <div id="gl"></div>
+      <div id="footer">
+        Copyright &copy; 2023 Sanghyeok Park. All rights reserved.
+      </div>
+    </div>
+    
+  </body>
+</html>
