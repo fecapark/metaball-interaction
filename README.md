@@ -10,8 +10,10 @@ by fecapark
 
 ## Info
 
-In computer graphics, [metaballs](https://en.wikipedia.org/wiki/Metaballs) can be implemented using a opacity-[thresholding](<https://en.wikipedia.org/wiki/Thresholding_(image_processing)>) method with [Gaussian Blur](https://en.wikipedia.org/wiki/Gaussian_blur).
+In computer graphics, [metaballs](https://en.wikipedia.org/wiki/Metaballs) can be implemented using a alpha-[thresholding](<https://en.wikipedia.org/wiki/Thresholding_(image_processing)>) method with [Gaussian Blur](https://en.wikipedia.org/wiki/Gaussian_blur).
 
 Due to WebGL([PIXI.js](https://github.com/pixijs/pixijs)) for high performance, in general, 60fps was possible.
 
-I need blur-filter and threshold filter, but PIXI.js doesn't have the threshold filter, so I made [it](https://github.com/fecapark/metaball-interaction/blob/master/src/utils/filters.ts) using GLSL.
+I need blur filter and alpha-threshold filter, but PIXI.js doesn't have the threshold filter, so I made [it](https://github.com/fecapark/metaball-interaction/blob/master/src/utils/filters.ts) using GLSL.
+
+![demo](https://github.com/fecapark/metaball-interaction/assets/101973955/f27269ee-b861-465e-8725-3f7a070a868b)
